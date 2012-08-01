@@ -1,5 +1,6 @@
 $( document ).ready( function() {
-	//need to implement a stack for cell processing because apparently javascript has trouble with recursive function calls
+	//need to implement a global stack for cell processing because apparently javascript has trouble with recursive function calls
+	//it's a little slow at larger sizes, maybe due to the push() function call overhead?
 	$.gameParams = {
 		lostGame : false,
 		rows : 8,
@@ -7,9 +8,6 @@ $( document ).ready( function() {
 		mines : 10,
 		cellStack : []
 	};
-	
-	//hide loading spinner
-	$( '#spinner' ).hide();
 
 	//attach click handlers to controls
 	$( '#new-game-button' ).click( function() {
@@ -108,17 +106,11 @@ jQuery.fn.checkCell = function( totalRows, totalCols ) {
 
 //processes the global stack of queued cells
 jQuery.fn.processCellStack = function() {
-	//show loading spinner
-	$( '#spinner' ).show();
-	
 	while( $.gameParams.cellStack.length > 0 )
 	{
 		var c = $.gameParams.cellStack.pop();
 		$( c ).checkCell( $.gameParams.rows, $.gameParams.cols );
 	}
-	
-	//hide loading spinner
-	$( '#spinner' ).hide();
 };
 
 //checks number of hidden cells to see if all safe cells have been revealed, and if all mined cells are still hidden.  if so, user has won!
@@ -159,6 +151,20 @@ jQuery.fn.changeSettings = function() {
 	
 	//start new game with new settings
 	$( 'table' ).loadNewGame( $.gameParams.rows, $.gameParams.cols, $.gameParams.mines );
+};
+
+//function triggered when user clicks on a cell (attached at initialization of board to hidden cells, removed when they are revealed)
+//disables the cell and marks it as revealed, then calls checkCell to process it and update the game state
+jQuery.fn.cellClickHandler = function( cell ) {
+	//mark cell as clicked (remove class and click handler)
+	$( cell ).removeClass( 'cell-hidden' );
+	$( cell ).off( 'click' );
+	
+	//process cell
+	$( cell ).checkCell( $.gameParams.rows, $.gameParams.cols );
+	
+	//process stack in case the clicked cell added any
+	$( 'table' ).processCellStack();
 };
 
 //reveals location of mines
@@ -223,28 +229,15 @@ jQuery.fn.loadNewGame = function( numRows, numCols, numMines ) {
 	
 	//attach click handlers to cells
 	$( '.cell-hidden' ).click( function() {
-		//mark cell as clicked (remove class and click handler)
-		$( this ).removeClass( 'cell-hidden' );
-		$( this ).off( 'click' );
-		
-		//process cell
-		$( this ).checkCell( $.gameParams.rows, $.gameParams.cols );
-		
-		//process stack in case the clicked cell added any
-		$( 'table' ).processCellStack();
+		$().cellClickHandler( this );
 	});
 	
-	//center control buttons and spinner because I'm a little OCD
+	//center control buttons because I'm a little OCD
 	$( 'button.gameButton' ).each( function( i ) {
 		var btnWidth = $( this ).outerWidth();
 		var wrapperWidth = $( '.gameControl' ).width();
 		$( this ).css( 'margin-left', function( i, v ) {
 			return parseFloat( ( wrapperWidth - btnWidth ) / 2 );
 		});
-	});
-	
-	var containerWidth = $( '.container' ).innerWidth();
-	$( '#spinner').css( 'left', function( i, v ) {
-		return parseFloat( containerWidth / 2 );
 	});
 };

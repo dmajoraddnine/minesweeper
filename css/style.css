@@ -37,21 +37,6 @@
 	margin-left: 10px;
 }
 
-/* loading spinner */
-#spinner {
-	position: fixed;
-	bottom: 100px;
-	background-color: white;
-	padding-left: 10px;
-	padding-right: 10px;
-	height: 30px;
-	line-height: 30px;
-	font-size: 18px;
-	font-weight: bold;
-	font-family: Helvetica, Arial, sans-serif;
-	text-align: center;
-}
-
 /* grid */
 #grid {
 	width: 80%;
