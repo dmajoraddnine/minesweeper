@@ -1,0 +1,94 @@
+@font-face {
+    font-family: Walkway;
+    src: url( 'fonts/Walkway_Bold-webfont.ttf' );
+    font-weight:400;
+}
+
+/* container */
+.container {
+	margin-top: 20px;
+	margin-bottom: 20px;
+	width: 1170px;
+}
+
+/* message */
+#message {
+	height: 30px;
+	line-height: 30px;
+	font-size: 18px;
+	font-weight: bold;
+	font-family: Helvetica, Arial, sans-serif;
+	text-align: center;
+}
+
+/* game controls & settings */
+.gameControl {
+	width: 250px;
+	margin-left: auto;
+	margin-right: auto;
+	margin-top: 8px;
+}
+
+.gameControl button {
+	display: inline;
+}
+
+.form-actions button {
+	margin-left: 10px;
+}
+
+/* loading spinner */
+#spinner {
+	position: fixed;
+	bottom: 100px;
+	background-color: white;
+	padding-left: 10px;
+	padding-right: 10px;
+	height: 30px;
+	line-height: 30px;
+	font-size: 18px;
+	font-weight: bold;
+	font-family: Helvetica, Arial, sans-serif;
+	text-align: center;
+}
+
+/* grid */
+#grid {
+	width: 80%;
+	margin-left: auto;
+	margin-right: auto;
+	margin-top: 8px;
+}
+
+table {
+	margin-left: auto;
+	margin-right: auto;
+}
+
+.cell {
+	height: 30px;
+	line-height: 30px;
+	min-width: 30px;
+	font-size: 18px;
+	font-weight: bold;
+	font-family: Walkway, Helvetica, Arial, sans-serif;
+	text-align: center;
+	border: 1px solid #333;
+}
+
+.cell-hidden {
+	background-color: #ccc;
+}
+
+.cell-danger-debug {
+	background-image: url( '../img/glyphicons_308_bomb.png' );
+	background-repeat: no-repeat;
+	background-position: center;
+}
+
+.cell-kaboom {
+	background-color: red;
+	background-image: url( '../img/glyphicons_290_skull.png' );
+	background-repeat: no-repeat;
+	background-position: center;
+}

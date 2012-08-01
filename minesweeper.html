@@ -1,4 +1,6 @@
-<html>
+<!-- A Javascript implementation of Minesweeper, written by Matt Yetter. Much love to the Twitter Bootstrap folks. Designed for use in Google Chrome. -->
+<!DOCTYPE html>
+<html lang="en">
   <head>
     <meta charset="utf-8">
 	<title>Minesweeper!</title>
@@ -7,15 +9,87 @@
 	
 	<!--le css-->
 	<link href="css/bootstrap.css" rel="stylesheet">
+	<link href="css/style.css" rel="stylesheet">
 	
   </head>
 	
   <body>
-  
+	<!--le content-->
+	<div class="container">
+		<div id="message">
+		</div>
+		<div id="spinner">
+			<span id="spin-message">Please wait...</span>
+			<img src="img/spinner.gif" />
+		</div>
+		<div class="gameControl">
+			<button id="new-game-button" class="btn btn-inverse gameButton" type="button">New Game</button>
+		</div>
+		<div class="gameControl">
+			<button id="validate-button" class="btn btn-inverse gameButton" type="button">Validate</button>
+		</div>
+		<div class="gameControl">
+			<button id="settings-button" class="btn btn-inverse gameButton" type="button">Settings</button>
+		</div>
+		<div id="grid">
+			<table>
+			</table>
+		</div>
+		<div class="gameControl">
+			<button id="cheat-button" class="btn btn-inverse gameButton" type="button">Cheat</button>
+		</div>
+	</div>
+	
+	<!--le settings modal-->
+	<div class="modal hide" id="settings-modal">
+		<div class="modal-header">
+			<button type="button" class="close" data-dismiss="modal">x</button>
+			<h3>Change Settings</h3>
+		</div>
+		<div class="modal-body">
+			<form id="settings-form">
+				<fieldset>
+					<div class="control-group">
+						<label class="control-label">Board size</label>
+						<div class="controls">
+							<label class="radio">
+								<input type="radio" name="selectSize" id="sizeSmall" value="8" checked>8x8</input>
+							</label>
+							<label class="radio">
+								<input type="radio" name="selectSize" id="sizeMedium" value="16">16x16</input>
+							</label>
+							<label class="radio">
+								<input type="radio" name="selectSize" id="sizeLarge" value="32">32x32  <span style="color:red;">Warning: gets a bit slow at larger sizes</span></input>
+							</label>
+						</div>
+					</div>
+					<div class="control-group">
+						<label class="control-label">Number of mines</label>
+						<div class="controls">
+							<label class="radio">
+								<input type="radio" name="selectMines" id="minesSmall" value="10" checked>10</input>
+							</label>
+							<label class="radio">
+								<input type="radio" name="selectMines" id="minesMedium" value="25">25</input>
+							</label>
+							<label class="radio">
+								<input type="radio" name="selectMines" id="minesLarge" value="40">40</input>
+							</label>
+						</div>
+					</div>
+					<div class="form-actions">
+						<button type="button" class="btn" data-dismiss="modal">Close</a>
+						<button type="submit" class="btn btn-primary">Save changes</a>
+					</div>
+				</fieldset>
+			</form>
+		</div>
+	</div>
 	
 	<!--le scripts (placed at end of page for faster pageloading)-->
+	<script type="text/javascript" src="http://code.jquery.com/jquery-1.7.2.min.js"></script>
 	<script type="text/javascript" src="js/bootstrap.js"></script>
-	<script type="text/javascript" src="js/jquery.js"></script>
+	<script type="text/javascript" src="js/bootstrap-modal.js"></script>
 	<script type="text/javascript" src="js/sweep.js"></script>
 	
   </body>
