@@ -136,7 +136,7 @@ jQuery.fn.validate = function() {
 			
 			//show locations of other mines if not revealed already
 			$( '.cell-danger', 'table' ).addClass( 'debug' );
-			$( '.debug', 'table' ).css( 'background-color', 'cyan' );
+			$( '.debug', 'table' ).css( 'background-color', 'greenYellow' );
 		
 			//disable click handlers on all cells so you can't keep playing
 			$( '.cell' ).off( 'click' );
