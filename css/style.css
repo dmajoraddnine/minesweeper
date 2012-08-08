@@ -51,29 +51,28 @@ table {
 }
 
 .cell {
-	height: 30px;
-	line-height: 30px;
-	min-width: 30px;
-	font-size: 18px;
+	height: 16px;
+	line-height: 16px;
+	min-width: 16px;
+	font-size: 14px;
 	font-weight: bold;
 	font-family: Walkway, Helvetica, Arial, sans-serif;
 	text-align: center;
 	border: 1px solid #333;
 }
 
-.cell-hidden {
-	background-color: #ccc;
+.debug, .cell-kaboom {
+	background-size: 15px 15px;
 }
 
-.cell-danger-debug {
-	background-image: url( '../img/glyphicons_308_bomb.png' );
-	background-repeat: no-repeat;
-	background-position: center;
+.debug {
+	background: #ccc center center no-repeat url( '../img/glyphicons_308_bomb.png' );
 }
 
 .cell-kaboom {
-	background-color: red;
-	background-image: url( '../img/glyphicons_290_skull.png' );
-	background-repeat: no-repeat;
-	background-position: center;
+	background: red center center no-repeat url( '../img/glyphicons_290_skull.png' );
+}
+
+.cell-hidden {
+	background-color: #ccc;
 }

@@ -40,7 +40,9 @@ $( document ).ready( function() {
 //if there are zero neighboring mines, adds neighboring cells to global stack to be post-processed.
 //called on jquery object containing a single cell
 jQuery.fn.checkCell = function( totalRows, totalCols ) {
-	if( $( this ).hasClass( 'cell-danger' ) || $( this ).hasClass( 'cell-danger-debug' ) )
+	console.time( 'checkCell' );
+	var currentCell = $( this );
+	if( currentCell.hasClass( 'cell-danger' ) )
 	{
 		//found a mine!
 		$( 'table' ).loseGame( this );
@@ -48,11 +50,9 @@ jQuery.fn.checkCell = function( totalRows, totalCols ) {
 	else
 	{
 		//no mine here.
-		$( this ).addClass( 'cell-safe' );
-		
 		//get coordinates from HTML5 data attrs
-		var row = $( this ).data( 'row' );
-		var col = $( this ).data( 'col' );
+		var row = currentCell.data( 'row' );
+		var col = currentCell.data( 'col' );
 		
 		//make sure we don't go off the edge of the grid when we check for mines
 		var rLowerBound = (( row == 0 ) ? row : ( row - 1 ));
@@ -66,8 +66,9 @@ jQuery.fn.checkCell = function( totalRows, totalCols ) {
 		{
 			for( j = cLowerBound; j <= cUpperBound; j++ )
 			{
-				var targetCell = '.cell-row-' + i + '.cell-col-' + j;
-				if( $( targetCell ).hasClass( 'cell-danger' ) || $( targetCell ).hasClass( 'cell-danger-debug' ) )
+				var targetCell = '#cell-row-' + i + '-col-' + j;
+				var targetCellObj = $( targetCell );
+				if( targetCellObj.is( '.cell-hidden.cell-danger' ) )
 				{
 					minesFound = minesFound + 1;
 				}
@@ -81,17 +82,18 @@ jQuery.fn.checkCell = function( totalRows, totalCols ) {
 			{
 				for( j = cLowerBound; j <= cUpperBound; j++ )
 				{
-					var targetCell = '.cell-row-' + i + '.cell-col-' + j;
-					if( $( targetCell ).hasClass( 'cell-hidden' ) )
+					var targetCell = '#cell-row-' + i + '-col-' + j;
+					var targetCellObj = $( targetCell );
+					if( targetCellObj.hasClass( 'cell-hidden' ) )
 					{
 						//push cell coordinates to stack
-						$.gameParams.cellStack.push( targetCell );
+						$.gameParams.cellStack.push( targetCellObj );
 						
 						//mark cell as revealed (prevents duplicate pushes of same cell)
-						$( targetCell ).removeClass( 'cell-hidden' );
+						targetCellObj.removeClass( 'cell-hidden' );
 						
 						//remove click handler
-						$( targetCell ).off( 'click' );
+						targetCellObj.off( 'click' );
 					}
 				}
 			}
@@ -99,18 +101,21 @@ jQuery.fn.checkCell = function( totalRows, totalCols ) {
 		else
 		{
 			//display number of found mines
-			$( this ).text( minesFound.toString() );
+			currentCell.text( minesFound.toString() );
 		}
+		console.timeEnd( 'checkCell' );
 	}
 };
 
 //processes the global stack of queued cells
 jQuery.fn.processCellStack = function() {
+	console.time( 'processCellStack' );
 	while( $.gameParams.cellStack.length > 0 )
 	{
 		var c = $.gameParams.cellStack.pop();
-		$( c ).checkCell( $.gameParams.rows, $.gameParams.cols );
+		c.checkCell( $.gameParams.rows, $.gameParams.cols );
 	}
+	console.timeEnd( 'processCellStack' );
 };
 
 //checks number of hidden cells to see if all safe cells have been revealed, and if all mined cells are still hidden.  if so, user has won!
@@ -130,8 +135,8 @@ jQuery.fn.validate = function() {
 			$( '#message' ).text( 'You win! *brofist*' );
 			
 			//show locations of other mines if not revealed already
-			$( '.cell-danger' ).removeClass( 'cell-danger' ).addClass( 'cell-danger-debug' );
-			$( '.cell-danger-debug' ).css( 'background-color', 'cyan' );
+			$( '.cell-danger', 'table' ).addClass( 'debug' );
+			$( '.debug', 'table' ).css( 'background-color', 'cyan' );
 		
 			//disable click handlers on all cells so you can't keep playing
 			$( '.cell' ).off( 'click' );
@@ -156,12 +161,13 @@ jQuery.fn.changeSettings = function() {
 //function triggered when user clicks on a cell (attached at initialization of board to hidden cells, removed when they are revealed)
 //disables the cell and marks it as revealed, then calls checkCell to process it and update the game state
 jQuery.fn.cellClickHandler = function( cell ) {
+	var cellObj = $( cell );
 	//mark cell as clicked (remove class and click handler)
-	$( cell ).removeClass( 'cell-hidden' );
-	$( cell ).off( 'click' );
+	cellObj.removeClass( 'cell-hidden' );
+	cellObj.off( 'click' );
 	
 	//process cell
-	$( cell ).checkCell( $.gameParams.rows, $.gameParams.cols );
+	cellObj.checkCell( $.gameParams.rows, $.gameParams.cols );
 	
 	//process stack in case the clicked cell added any
 	$( 'table' ).processCellStack();
@@ -169,7 +175,7 @@ jQuery.fn.cellClickHandler = function( cell ) {
 
 //reveals location of mines
 jQuery.fn.cheat = function() {
-	$( '.cell-danger' ).removeClass( 'cell-danger' ).addClass( 'cell-danger-debug' );
+	$( '.cell-danger', 'table' ).addClass( 'debug' );
 };
 
 //a mine has been found! ends the game
@@ -182,39 +188,40 @@ jQuery.fn.loseGame = function( clickedCell ) {
 	$( clickedCell ).removeClass( 'cell-danger' ).addClass( 'cell-kaboom' );
 	
 	//show locations of other mines
-	$( '.cell-danger' ).removeClass( 'cell-danger' ).addClass( 'cell-danger-debug' );
+	$( '.cell-danger', 'table' ).addClass( 'debug' );
 	
 	//disable click handlers on all cells so you can't keep playing
 	$( '.cell' ).off( 'click' );
 };
 
 //begins a new game with the specified dimensions
+//called on a $( 'table' ) object
 jQuery.fn.loadNewGame = function( numRows, numCols, numMines ) {
+	console.time( 'loadNewGame' );
+	tableObj = $( this );
 	//erase old state
 	$( '#message' ).html('');
 	$.gameParams.lostGame = false;
 	$.gameParams.cellStack = [];
 	
 	//erase old board
-	$( 'tr' ).each( function( i ) {
-		$( this ).remove();
-	});
+	tableObj.empty();
 	
-	//add html for table rows
+	//add html for table rows and cols (faster to do it in a string first)
+	//need to store row and col in class and in HTML5 data attrs so we can both place the mines now and do math later when we check hidden cells
+	var tableHtml = '';
 	for( i=0; i < numRows; i++ )
 	{
-		this.append( '<tr></tr>' );
-	}
-	
-	//add html for table cols (initialize to 'hidden' state)
-	//need to store row and col in class and in HTML5 data attrs so we can both place the mines now and do math later when we check hidden cells
-	$( 'tr' ).each( function( i ) {
+		tableHtml += '<tr>';
 		for( j=0; j < numCols; j++ )
 		{
-			$( this ).append( '<td class="cell cell-hidden cell-row-' + i + ' cell-col-' + j + '" data-row="' + i + '" data-col="' + j + '"></td>' );
+			var cellString = '<td class="cell cell-hidden" id="cell-row-' + i + '-col-' + j + '" data-row="' + i + '" data-col="' + j + '"></td>';
+			tableHtml += cellString;
 		}
-	});
-
+		tableHtml += '</tr>';
+	}
+	this.append( tableHtml );
+	
 	//randomly generate coordinates for mined cells and add DANGERCLASS
 	//do it in a while loop instead of a for loop to avoid issues with duplicate coordinates
 	var minesPlaced = 0;
@@ -222,9 +229,13 @@ jQuery.fn.loadNewGame = function( numRows, numCols, numMines ) {
 	{
 		var r = Math.floor( Math.random() * numRows );
 		var c = Math.floor( Math.random() * numCols );
-		var targetCell = '.cell-row-' + r + '.cell-col-' + c;
-		$( targetCell ).addClass( 'cell-danger' );
-		minesPlaced = $( '.cell-danger' ).length;
+		var targetCell = '#cell-row-' + r + '-col-' + c;
+		var targetCellObj = $( targetCell );
+		if( !targetCellObj.hasClass( 'cell-danger' ) )
+		{
+			targetCellObj.addClass( 'cell-danger' );
+			minesPlaced = minesPlaced + 1;
+		}
 	}
 	
 	//attach click handlers to cells
@@ -240,4 +251,5 @@ jQuery.fn.loadNewGame = function( numRows, numCols, numMines ) {
 			return parseFloat( ( wrapperWidth - btnWidth ) / 2 );
 		});
 	});
+	console.timeEnd( 'loadNewGame' );
 };
