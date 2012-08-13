@@ -66,16 +66,16 @@ table {
 	background-color: white;
 }
 
-.debug, .cell-kaboom {
-	background-size: 15px 15px;
-}
-
 .debug {
 	background: #ccc center center no-repeat url( '../img/glyphicons_308_bomb.png' );
 }
 
 .cell-kaboom {
 	background: red center center no-repeat url( '../img/glyphicons_290_skull.png' );
+}
+
+.debug, .cell-kaboom {
+	background-size: 15px 15px;
 }
 
 .cell-hidden {
